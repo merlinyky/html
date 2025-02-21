@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Report Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f6f5;
+            color: #333;
+            display: flex;
+        }
+        .dashboard-container {
+            flex: 1;
+            max-width: calc(100% - 300px); /* Adjusts dynamically based on TOC width + gap */
+            margin: 0 20px 0 240px; /* Left margin includes TOC width + 40px gap */
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #d7d7d7;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #001AFF;
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            color: #696969;
+            margin: 5px 0 0;
+        }
+        .toc {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #d7d7d7;
+            border-radius: 5px;
+            width: auto; /* Width adjusts to content */
+            max-width: 240px; /* Optional max width to prevent excessive stretching */
+        }
+        .toc h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 15px;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .toc li {
+            margin-bottom: 10px;
+        }
+        .toc a {
+            color: #001AFF;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            margin: 40px 0;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #001AFF;
+            margin-bottom: 10px;
+        }
+        .section-separator {
+            height: 2px;
+            background: #001AFF;
+            width: 50px;
+            margin: 0 0 20px;
+        }
+        .section-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .chart-container, .table-container, .comments-container {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #d7d7d7;
+            border-radius: 5px;
+        }
+        .chart-container h2, .table-container h2, .comments-container h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 15px;
+        }
+        .chart-placeholder {
+            height: 300px;
+            background-color: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #696969;
+            font-size: 14px;
+            border: 1px dashed #d7d7d7;
+        }
+        .two-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .two-charts .chart-placeholder {
+            height: 250px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #d7d7d7;
+        }
+        th {
+            background-color: #f8f8f8;
+            color: #696969;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f5f6f5;
+        }
+        .small-table td, .small-table th {
+            padding: 8px 10px;
+        }
+        .comments-container {
+            padding-top: 10px;
+        }
+        .comments-container h2 {
+            margin-top: 10px;
+        }
+        .comment {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+        .comment span {
+            display: block;
+            font-size: 12px;
+            color: #696969;
+            margin-top: 5px;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #001AFF;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: #0033CC;
+        }
+    </style>
+</head>
+<body>
+    <!-- Table of Contents Sidebar -->
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#revenue-analysis">Revenue Analysis</a></li>
+            <li><a href="#expense-analysis">Expense Analysis</a></li>
+            <li><a href="#profit-analysis">Profit Analysis</a></li>
+            <li><a href="#cash-flow-analysis">Cash Flow Analysis</a></li>
+            <li><a href="#investment-performance">Investment Performance</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Financial Report Dashboard</h1>
+            <p>As of February 21, 2025</p>
+        </div>
+
+        <!-- Section 1: Revenue Analysis (Standard Layout) -->
+        <div class="section" id="revenue-analysis">
+            <div class="section-title">Revenue Analysis</div>
+            <div class="section-separator"></div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <h2>Revenue Trend</h2>
+                    <div class="chart-placeholder">[Chart Placeholder - Revenue Trend]</div>
+                </div>
+                <div class="table-container">
+                    <h2>Revenue Details</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sales Revenue</td>
+                                <td>$900,000</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                            <tr>
+                                <td>Service Revenue</td>
+                                <td>$350,000</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div class="comment">
+                        <p>Revenue growth is on track.</p>
+                        <span>John Doe - Feb 20, 2025</span>
+                    </div>
+                    <div class="comment">
+                        <p>Service revenue could improve.</p>
+                        <span>Jane Smith - Feb 19, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Expense Analysis (Two Charts in a Row) -->
+        <div class="section" id="expense-analysis">
+            <div class="section-title">Expense Analysis</div>
+            <div class="section-separator"></div>
+            <div class="section-content">
+                <div class="chart-container two-charts">
+                    <div>
+                        <h2>Expense Trend</h2>
+                        <div class="chart-placeholder">[Chart Placeholder - Expense Trend]</div>
+                    </div>
+                    <div>
+                        <h2>Expense Breakdown</h2>
+                        <div class="chart-placeholder">[Chart Placeholder - Expense Breakdown]</div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h2>Expense Details</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operational Costs</td>
+                                <td>$500,000</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                            <tr>
+                                <td>Marketing Expenses</td>
+                                <td>$150,000</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div class="comment">
+                        <p>Marketing costs seem high.</p>
+                        <span>Mike Lee - Feb 18, 2025</span>
+                    </div>
+                    <div class="comment">
+                        <p>Ops expenses need review.</p>
+                        <span>Sara Brown - Feb 17, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Profit Analysis (Small Table) -->
+        <div class="section" id="profit-analysis">
+            <div class="section-title">Profit Analysis</div>
+            <div class="section-separator"></div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <h2>Profit Trend</h2>
+                    <div class="chart-placeholder">[Chart Placeholder - Profit Trend]</div>
+                </div>
+                <div class="table-container small-table">
+                    <h2>Profit Summary</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Net Profit</td>
+                                <td>$450,000</td>
+                            </tr>
+                            <tr>
+                                <td>Gross Profit</td>
+                                <td>$700,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div class="comment">
+                        <p>Profit margins are stable.</p>
+                        <span>Emily Clark - Feb 20, 2025</span>
+                    </div>
+                    <div class="comment">
+                        <p>Consider cost optimization.</p>
+                        <span>Tom Wilson - Feb 19, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Cash Flow Analysis (Larger Table) -->
+        <div class="section" id="cash-flow-analysis">
+            <div class="section-title">Cash Flow Analysis</div>
+            <div class="section-separator"></div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <h2>Cash Flow Trend</h2>
+                    <div class="chart-placeholder">[Chart Placeholder - Cash Flow Trend]</div>
+                </div>
+                <div class="table-container">
+                    <h2>Cash Flow Details</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Change (%)</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operating Cash Flow</td>
+                                <td>$300,000</td>
+                                <td>+2.5%</td>
+                                <td>Feb 2025</td>
+                                <td>Stable</td>
+                            </tr>
+                            <tr>
+                                <td>Investing Cash Flow</td>
+                                <td>-$100,000</td>
+                                <td>-1.8%</td>
+                                <td>Feb 2025</td>
+                                <td>Capital Expenditure</td>
+                            </tr>
+                            <tr>
+                                <td>Financing Cash Flow</td>
+                                <td>$50,000</td>
+                                <td>+0.9%</td>
+                                <td>Feb 2025</td>
+                                <td>Debt Repayment</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div class="comment">
+                        <p>Cash flow remains positive.</p>
+                        <span>Lisa Green - Feb 20, 2025</span>
+                    </div>
+                    <div class="comment">
+                        <p>Monitor investing outflows.</p>
+                        <span>Paul Adams - Feb 19, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Investment Performance (Minimal Comments) -->
+        <div class="section" id="investment-performance">
+            <div class="section-title">Investment Performance</div>
+            <div class="section-separator"></div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <h2>Investment Returns</h2>
+                    <div class="chart-placeholder">[Chart Placeholder - Investment Returns]</div>
+                </div>
+                <div class="table-container">
+                    <h2>Investment Details</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Asset</th>
+                                <th>Return</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Equities</td>
+                                <td>8.2%</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                            <tr>
+                                <td>Bonds</td>
+                                <td>3.5%</td>
+                                <td>Feb 2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="comments-container">
+                    <h2>Comments</h2>
+                    <div class="comment">
+                        <p>Equities outperforming expectations.</p>
+                        <span>Chris Evans - Feb 20, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" title="Back to Top">↑</a>
+
+    <!-- JavaScript for Back to Top Button Visibility -->
+    <script>
+        const backToTopButton = document.querySelector('.back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
