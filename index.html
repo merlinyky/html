@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Report Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Table of Contents Sidebar -->
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#revenue-analysis">Revenue Analysis</a></li>
+            <li><a href="#expense-analysis">Expense Analysis</a></li>
+            <li><a href="#profit-analysis">Profit Analysis</a></li>
+            <li><a href="#cash-flow-analysis">Cash Flow Analysis</a></li>
+            <li><a href="#investment-performance">Investment Performance</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Financial Report Dashboard</h1>
+            <p>As of February 21, 2025</p>
+        </div>
+
+        <!-- Sections will be inserted here -->
+        <div id="sections"></div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" title="Back to Top">↑</a>
+
+    <!-- JavaScript for Back to Top Button and Section Loading -->
+    <script>
+        const backToTopButton = document.querySelector('.back-to-top');
+        const sectionsContainer = document.getElementById('sections');
+        const sectionFiles = [
+            'section1.html',
+            'section2.html',
+            'section3.html',
+            'section4.html',
+            'section5.html'
+        ];
+
+        // Load sections dynamically
+        sectionFiles.forEach(file => {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    sectionsContainer.innerHTML += data;
+                })
+                .catch(error => console.error(`Error loading ${file}:`, error));
+        });
+
+        // Back to Top button visibility
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
